@@ -1,0 +1,38 @@
+name: Medusa trial loop
+
+# Runs the trial loop (Scout -> Brief -> Create -> Guard -> Report) every 6 hours
+# and commits the fresh report to trial/out/.
+on:
+  schedule:
+    - cron: "17 */6 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: trial
+  cancel-in-progress: false
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install fonts and Pillow
+        run: |
+          sudo apt-get update -q
+          sudo apt-get install -y -q fonts-noto-core fonts-freefont-ttf
+          pip install -q "pillow>=10"
+      - name: Run trial loop
+        run: python trial/run.py
+      - name: Commit report
+        run: |
+          git config user.name "medusa-bot"
+          git config user.email "medusa-bot@users.noreply.github.com"
+          git add trial/out
+          git diff --cached --quiet || git commit -m "Trial run $(date -u +%Y-%m-%dT%H:%MZ)"
+          git push
