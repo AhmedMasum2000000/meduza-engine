@@ -23,3 +23,8 @@ Python 3.12 workers · FFmpeg · Remotion (Node) · faster-whisper · Edge TTS �
 ## Public repository
 
 This repo is public. It contains **code only**: no API keys, no tokens, no client data. Configuration comes from environment variables at runtime (see `.env.example`).
+
+## Presentation
+
+`presentation/index.html` is the Project Medusa pitch page, published here so it has a public link.
+Live preview: https://htmlpreview.github.io/?https://github.com/AhmedMasum2000000/meduza-engine/blob/ccr-8f04d111-vqbro0/presentation/index.html

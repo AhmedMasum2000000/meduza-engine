@@ -1,0 +1,1371 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Project Medusa</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="description" content="Project Medusa: one system that runs hundreds of organic social pages across many niches. Plan, budget and red lines for the funding decision.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Forum&family=Figtree:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: one long story told in chapters; full-width bands, centred 1080px column, chapter rail on wide screens.
+   Palette: cast bronze with verdigris patina (dark) / veined marble (light). Medusa as a bronze statue. */
+:root {
+  --ground: #101614;
+  --ground-2: #141c19;
+  --surface: #19231f;
+  --surface-2: #1f2b27;
+  --line: #2b3a35;
+  --ink: #ebe6da;
+  --ink-2: #c3c4b8;
+  --muted: #8f9c95;
+  --verdigris: #62c2aa;
+  --verdigris-soft: rgba(98, 194, 170, 0.14);
+  --bronze: #d49a5c;
+  --bronze-soft: rgba(212, 154, 92, 0.14);
+  --hatch: rgba(208, 59, 59, 0.16);
+  --status-good: #0ca30c;
+  --status-warn: #fab219;
+  --status-crit: #d03b3b;
+  --font-display: "Forum", "Cormorant", "Times New Roman", serif;
+  --font-body: "Figtree", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+  --fs-hero: clamp(3.4rem, 15vw, 6.6rem);
+  --fs-h2: clamp(2rem, 5vw, 3.5rem);
+  --fs-h3: 1.2rem;
+  --fs-body: 1.0625rem;
+  --fs-small: 0.9rem;
+  --fs-label: 0.72rem;
+  --radius: 14px;
+  color-scheme: dark;
+}
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme="dark"]) {
+    --ground: #eef1ee;
+    --ground-2: #e4e9e5;
+    --surface: #fbfcfb;
+    --surface-2: #f2f5f2;
+    --line: #cfd8d2;
+    --ink: #17201d;
+    --ink-2: #3b4743;
+    --muted: #5d6a65;
+    --verdigris: #1a7a65;
+    --verdigris-soft: rgba(26, 122, 101, 0.12);
+    --bronze: #92561c;
+    --bronze-soft: rgba(146, 86, 28, 0.12);
+    --hatch: rgba(208, 59, 59, 0.12);
+    color-scheme: light;
+  }
+}
+:root[data-theme="light"] {
+  --ground: #eef1ee;
+  --ground-2: #e4e9e5;
+  --surface: #fbfcfb;
+  --surface-2: #f2f5f2;
+  --line: #cfd8d2;
+  --ink: #17201d;
+  --ink-2: #3b4743;
+  --muted: #5d6a65;
+  --verdigris: #1a7a65;
+  --verdigris-soft: rgba(26, 122, 101, 0.12);
+  --bronze: #92561c;
+  --bronze-soft: rgba(146, 86, 28, 0.12);
+  --hatch: rgba(208, 59, 59, 0.12);
+  color-scheme: light;
+}
+
+:root { padding-top: env(safe-area-inset-top, 0px); padding-bottom: env(safe-area-inset-bottom, 0px); }
+*, *::before, *::after { box-sizing: border-box; }
+html { scroll-behavior: smooth; scroll-padding-top: 72px; }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+body {
+  margin: 0;
+  background: var(--ground);
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: var(--fs-body);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+img, canvas, svg { max-width: 100%; }
+[hidden] { display: none !important; }
+a { color: var(--verdigris); text-underline-offset: 3px; }
+:focus-visible { outline: 2px solid var(--bronze); outline-offset: 3px; border-radius: 6px; }
+h1, h2, h3 { margin: 0; text-wrap: balance; font-weight: 400; }
+p { margin: 0; }
+.wrap {
+  max-width: 1080px;
+  margin-inline: auto;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+.label {
+  font-family: var(--font-mono);
+  font-size: var(--fs-label);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.num { font-variant-numeric: tabular-nums; }
+
+/* ---------- top bar ---------- */
+.topbar {
+  position: sticky;
+  top: env(safe-area-inset-top, 0px);
+  z-index: 20;
+  background: color-mix(in srgb, var(--ground) 86%, transparent);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--line);
+}
+.topbar .wrap { display: flex; align-items: center; gap: 16px; height: 52px; }
+.wordmark { font-family: var(--font-display); font-size: 1.35rem; letter-spacing: 0.24em; color: var(--ink); text-decoration: none; }
+.topbar .now { margin-left: auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.progress { position: absolute; left: 0; bottom: -1px; height: 2px; width: 100%; background: transparent; }
+.progress span { display: block; height: 100%; width: 0; background: linear-gradient(90deg, var(--verdigris), var(--bronze)); }
+
+/* ---------- chapter rail (wide screens) ---------- */
+.rail { display: none; }
+@media (min-width: 1400px) {
+  .rail {
+    display: flex; flex-direction: column; gap: 2px;
+    position: fixed; z-index: 10;
+    left: calc(20px + env(safe-area-inset-left, 0px)); top: 50%; transform: translateY(-50%);
+    width: 150px;
+  }
+  .rail a {
+    display: flex; align-items: center; gap: 10px;
+    padding: 5px 8px; border-radius: 8px;
+    color: var(--muted); text-decoration: none;
+    font-family: var(--font-mono); font-size: 0.7rem; letter-spacing: 0.08em; text-transform: uppercase;
+  }
+  .rail a::before { content: ""; width: 6px; height: 6px; border-radius: 50%; border: 1px solid var(--muted); flex: none; }
+  .rail a:hover { color: var(--ink); }
+  .rail a.on { color: var(--ink); }
+  .rail a.on::before { background: var(--verdigris); border-color: var(--verdigris); box-shadow: 0 0 0 4px var(--verdigris-soft); }
+}
+
+/* ---------- bands ---------- */
+.band { padding-block: clamp(64px, 9vw, 120px); border-top: 1px solid var(--line); }
+.band.alt { background: var(--ground-2); }
+.chapter-head { display: grid; gap: 14px; margin-bottom: clamp(32px, 5vw, 56px); max-width: 760px; }
+.chapter-head .label b { color: var(--verdigris); font-weight: 500; }
+.chapter-head h2 { font-family: var(--font-display); font-size: var(--fs-h2); line-height: 1.05; letter-spacing: 0.01em; }
+.lead { font-size: 1.15rem; color: var(--ink-2); max-width: 62ch; }
+
+/* ---------- hero ---------- */
+.hero { padding-block: clamp(40px, 7vw, 88px) clamp(48px, 7vw, 96px); position: relative; overflow: hidden; }
+.hero-grid { display: grid; gap: 24px; align-items: center; }
+@media (min-width: 900px) { .hero-grid { grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr); gap: 40px; } }
+.hero h1 {
+  font-family: var(--font-display);
+  font-size: var(--fs-hero);
+  line-height: 0.9;
+  letter-spacing: 0.1em;
+  padding-right: 0.1em;
+  width: fit-content;
+  max-width: 100%;
+  margin-top: 18px;
+  background: linear-gradient(180deg, var(--ink) 30%, var(--bronze) 120%);
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+}
+.bait-title { font-family: var(--font-display); font-size: clamp(1.7rem, 4vw, 2.9rem); line-height: 1.12; margin-top: 22px; font-weight: 400; }
+.bait-title em { font-style: normal; color: var(--verdigris); }
+.bait { position: relative; white-space: nowrap; padding: 0 .12em; background: linear-gradient(transparent 55%, color-mix(in srgb, var(--bronze) 45%, transparent) 55%) no-repeat; background-size: 100% 100%; animation: mark 1.2s .3s cubic-bezier(.2,.8,.2,1) backwards; }
+@keyframes mark { from { background-size: 0 100%; } }
+.hookline { position: absolute; left: 50%; bottom: 78%; width: 22px; height: 40px; margin-left: -11px; color: var(--ink-2); transform-origin: 50% 0; animation: bob 3.2s ease-in-out infinite; pointer-events: none; }
+@keyframes bob { 0%,100% { transform: translateY(0) rotate(-3deg); } 50% { transform: translateY(6px) rotate(3deg); } }
+@media (prefers-reduced-motion: reduce) { .hookline, .bait { animation: none; } }
+.hero .tag { font-family: var(--font-display); font-size: clamp(1.5rem, 3.4vw, 2.3rem); color: var(--bronze); margin-top: 18px; line-height: 1.15; }
+.hero .lead { margin-top: 18px; }
+.actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 28px; }
+.btn {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 11px 18px; border-radius: 999px;
+  font: 600 0.95rem var(--font-body); text-decoration: none; cursor: pointer;
+  border: 1px solid var(--line); background: var(--surface); color: var(--ink);
+  transition: transform .2s ease, border-color .2s ease, background .2s ease;
+}
+.btn:hover { transform: translateY(-1px); border-color: var(--verdigris); }
+.btn.primary { background: var(--verdigris); border-color: var(--verdigris); color: var(--ground); }
+.facts { display: flex; flex-wrap: wrap; gap: 10px 22px; margin-top: 32px; }
+.facts div { display: grid; }
+.facts strong { font-family: var(--font-display); font-size: 1.9rem; line-height: 1; font-weight: 400; }
+.hero-figure { margin: 0; position: relative; }
+.hero-figure canvas { display: block; width: 100%; height: clamp(300px, 46vw, 520px); }
+.hero-figure figcaption { margin-top: 8px; }
+
+/* ---------- problem ---------- */
+.trio { display: grid; gap: 16px; }
+@media (min-width: 760px) { .trio { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+.pain { padding: 24px; border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface); display: grid; gap: 10px; align-content: start; }
+.pain .word { font-family: var(--font-display); font-size: 2.4rem; line-height: 1; color: var(--bronze); }
+.pain p { color: var(--ink-2); }
+.turn { margin-top: 40px; font-family: var(--font-display); font-size: clamp(1.5rem, 3.2vw, 2.2rem); line-height: 1.25; max-width: 30ch; }
+.turn em { font-style: normal; color: var(--verdigris); }
+
+/* ---------- proof ---------- */
+.proof { display: grid; gap: 16px; }
+@media (min-width: 720px) { .proof { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (min-width: 1000px) { .proof { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+.case { padding: 24px; border-top: 1px solid var(--line); display: grid; gap: 10px; align-content: start; }
+.case .big { font-family: var(--font-display); font-size: clamp(2.6rem, 6vw, 3.6rem); line-height: 1; color: var(--ink); }
+.case .who { color: var(--verdigris); font-weight: 600; }
+.case p { color: var(--ink-2); font-size: var(--fs-small); }
+.case .take { font-family: var(--font-mono); font-size: 0.8rem; color: var(--bronze); }
+.case.warn {
+  border: 1px solid color-mix(in srgb, var(--status-crit) 50%, var(--line));
+  border-radius: var(--radius);
+  background: repeating-linear-gradient(135deg, var(--hatch) 0 2px, transparent 2px 10px), var(--surface);
+}
+.case.warn .big { color: var(--status-crit); }
+
+/* ---------- loop ---------- */
+.loop { display: grid; gap: 28px; align-items: center; }
+@media (min-width: 900px) { .loop { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 48px; } }
+.wheel { width: 100%; max-width: 460px; margin-inline: auto; display: block; overflow: visible; }
+.wheel .ring { fill: none; stroke: var(--line); stroke-width: 1.5; }
+.wheel .arc { fill: none; stroke: var(--verdigris); stroke-width: 2; stroke-linecap: round; }
+.wheel .node { cursor: pointer; }
+.wheel .node circle { fill: var(--surface); stroke: var(--line); stroke-width: 1.5; transition: fill .25s, stroke .25s; }
+.wheel .node text { fill: var(--ink-2); font-family: var(--font-mono); font-size: 12.5px; letter-spacing: 0.12em; text-anchor: middle; dominant-baseline: middle; pointer-events: none; }
+.wheel .node.on circle { fill: var(--verdigris); stroke: var(--verdigris); }
+.wheel .node.on text { fill: var(--ground); }
+.wheel .node:focus-visible circle { stroke: var(--bronze); stroke-width: 3; }
+.wheel .core { fill: var(--bronze-soft); stroke: var(--bronze); stroke-width: 1; }
+.wheel .core-t { fill: var(--ink); font-family: var(--font-display); font-size: 26px; text-anchor: middle; dominant-baseline: middle; }
+.wheel .core-s { fill: var(--muted); font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.14em; text-anchor: middle; }
+.stage-panel { border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface); padding: clamp(20px, 3vw, 32px); display: grid; gap: 14px; min-width: 0; }
+.stage-panel h3 { font-family: var(--font-display); font-size: 2rem; line-height: 1.1; }
+.stage-panel .what { color: var(--ink-2); }
+.chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.chip { font-family: var(--font-mono); font-size: 0.75rem; padding: 4px 10px; border-radius: 999px; border: 1px solid var(--line); color: var(--ink-2); background: var(--surface-2); }
+.chip.free { border-color: color-mix(in srgb, var(--verdigris) 55%, var(--line)); color: var(--verdigris); background: var(--verdigris-soft); }
+.chip.paid { border-color: color-mix(in srgb, var(--bronze) 55%, var(--line)); color: var(--bronze); background: var(--bronze-soft); }
+.human { display: flex; gap: 10px; align-items: baseline; padding-top: 12px; border-top: 1px dashed var(--line); }
+.human strong { font-family: var(--font-display); font-size: 1.6rem; font-weight: 400; }
+.stage-nav { display: flex; gap: 8px; }
+
+/* ---------- calculator ---------- */
+.calc { display: grid; gap: 24px; }
+@media (min-width: 940px) { .calc { grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr); gap: 40px; } }
+.controls { display: grid; gap: 20px; align-content: start; }
+.control { display: grid; gap: 8px; }
+.control .row { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; }
+.control label, .control .lbl { font-weight: 600; }
+.control output { font-family: var(--font-display); font-size: 1.6rem; line-height: 1; }
+input[type="range"] { width: 100%; accent-color: var(--verdigris); height: 28px; }
+.toggles { display: flex; flex-wrap: wrap; gap: 8px; }
+.toggle {
+  font: 500 0.85rem var(--font-body); padding: 7px 12px; border-radius: 999px; cursor: pointer;
+  border: 1px solid var(--line); background: var(--surface); color: var(--muted);
+}
+.toggle[aria-pressed="true"] { border-color: var(--verdigris); color: var(--ink); background: var(--verdigris-soft); }
+.outputs { display: grid; gap: 16px; min-width: 0; }
+.tiles { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1px; background: var(--line); border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; }
+@media (min-width: 560px) { .tiles { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+.tile { background: var(--surface); padding: 16px; display: grid; gap: 4px; align-content: start; min-width: 0; }
+.tile strong { font-family: var(--font-display); font-size: clamp(1.6rem, 3.4vw, 2.2rem); line-height: 1.05; font-weight: 400; overflow-wrap: anywhere; }
+.tile.hi strong { color: var(--verdigris); }
+.dots-wrap { border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface); padding: 16px; position: relative; }
+.dots-wrap canvas { display: block; width: 100%; height: 220px; }
+.dots-tip {
+  position: absolute; pointer-events: none; padding: 6px 10px; border-radius: 8px;
+  background: var(--ink); color: var(--ground); font-size: 0.8rem; white-space: nowrap; transform: translate(-50%, -120%);
+}
+.note { font-size: var(--fs-small); color: var(--muted); }
+
+/* ---------- page angles ---------- */
+.angles { display: grid; gap: 12px; grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr)); margin-top: 24px; }
+.angle { padding: 16px 18px; border-radius: 12px; background: var(--surface); border: 1px solid var(--line); display: grid; gap: 4px; align-content: start; }
+.angle b { font-weight: 600; }
+.angle span { color: var(--muted); font-size: var(--fs-small); }
+
+/* ---------- niches ---------- */
+.filters { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 20px; }
+.niche-grid { display: grid; gap: 12px; grid-template-columns: repeat(auto-fill, minmax(min(100%, 240px), 1fr)); }
+.nogo { margin-top: 28px; display: grid; gap: 12px; }
+.nogo .niche-grid { grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr)); }
+.niche { border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface); }
+.niche summary { list-style: none; cursor: pointer; padding: 18px; display: grid; gap: 8px; }
+.niche summary::-webkit-details-marker { display: none; }
+.niche .top { display: flex; justify-content: space-between; align-items: center; gap: 10px; }
+.niche h3 { font-size: var(--fs-h3); font-weight: 600; font-family: var(--font-body); }
+.niche .why { color: var(--ink-2); font-size: var(--fs-small); }
+.niche .meta { font-family: var(--font-mono); font-size: 0.72rem; color: var(--muted); letter-spacing: 0.04em; }
+.niche .more { padding: 0 18px 18px; display: grid; gap: 8px; }
+.niche ul { margin: 0; padding-left: 18px; color: var(--ink-2); font-size: var(--fs-small); display: grid; gap: 4px; }
+.niche[open] { border-color: color-mix(in srgb, var(--verdigris) 50%, var(--line)); }
+.pill { display: inline-flex; align-items: center; gap: 6px; font-family: var(--font-mono); font-size: 0.7rem; letter-spacing: 0.08em; text-transform: uppercase; padding: 3px 9px; border-radius: 999px; white-space: nowrap; border: 1px solid currentColor; }
+.pill::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: currentColor; }
+.pill.start { color: var(--status-good); }
+.pill.careful { color: var(--status-warn); }
+.pill.gated { color: var(--bronze); }
+.pill.no_go { color: var(--status-crit); }
+.niche.no_go { background: repeating-linear-gradient(135deg, var(--hatch) 0 2px, transparent 2px 10px), var(--surface); }
+.rank { font-family: var(--font-display); font-size: 1.3rem; color: var(--bronze); }
+
+/* ---------- money ---------- */
+.lines { display: grid; gap: 1px; background: var(--line); border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; }
+@media (min-width: 760px) { .lines { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+.line { background: var(--surface); padding: 20px 22px; display: grid; gap: 6px; align-content: start; }
+.line .head { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; flex-wrap: wrap; }
+.line h3 { font-family: var(--font-display); font-size: 1.55rem; line-height: 1.1; }
+.line p { color: var(--ink-2); font-size: var(--fs-small); }
+.line .price { font-family: var(--font-mono); font-size: 0.8rem; color: var(--verdigris); }
+.line.wide { grid-column: 1 / -1; }
+
+/* ---------- stack ---------- */
+.stack { display: grid; gap: 1px; border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; background: var(--line); }
+.stack-row { display: grid; gap: 10px; padding: 16px 18px; background: var(--surface); }
+@media (min-width: 720px) { .stack-row { grid-template-columns: 140px minmax(0, 1fr); align-items: center; } }
+.stack-row .stage { font-family: var(--font-display); font-size: 1.3rem; }
+.legend-row { display: flex; gap: 16px; flex-wrap: wrap; margin: 14px 0 0; }
+.table-scroll { overflow-x: auto; border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface); }
+table { border-collapse: collapse; width: 100%; font-size: var(--fs-small); }
+th, td { text-align: left; padding: 12px 14px; border-bottom: 1px solid var(--line); vertical-align: top; }
+th { font-family: var(--font-mono); font-size: 0.72rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); font-weight: 500; }
+tr:last-child td { border-bottom: 0; }
+td.tool { font-weight: 600; white-space: nowrap; }
+.verdict { font-family: var(--font-mono); font-size: 0.75rem; white-space: nowrap; padding: 3px 9px; border-radius: 999px; border: 1px solid currentColor; }
+.v-buy { color: var(--verdigris); }
+.v-later { color: var(--bronze); }
+.v-skip { color: var(--muted); }
+.two { display: grid; gap: 24px; margin-top: 40px; }
+@media (min-width: 860px) { .two { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+.hw { border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface); padding: 22px; display: grid; gap: 12px; align-content: start; }
+.hw h3 { font-family: var(--font-display); font-size: 1.6rem; }
+.hw ul, .hw ol { margin: 0; padding-left: 20px; display: grid; gap: 8px; color: var(--ink-2); font-size: var(--fs-small); }
+.hw ul { list-style: none; padding-left: 0; }
+.hw li b { color: var(--ink); }
+.mark { font-family: var(--font-mono); font-size: 0.72rem; margin-right: 6px; }
+.mark.ok { color: var(--status-good); }
+.mark.meh { color: var(--status-warn); }
+.mark.no { color: var(--status-crit); }
+
+/* ---------- budget ---------- */
+.tiers { display: grid; gap: 12px; grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.tier {
+  text-align: left; cursor: pointer; padding: 18px; border-radius: var(--radius);
+  border: 1px solid var(--line); background: var(--surface); color: var(--ink);
+  display: grid; gap: 6px; align-content: start; font: inherit; min-width: 0;
+}
+.tier .t-name { font-family: var(--font-mono); font-size: 0.72rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted); }
+.tier .t-total { font-family: var(--font-display); font-size: clamp(1.8rem, 5vw, 3rem); line-height: 1; }
+.tier .t-tag { font-size: 0.82rem; color: var(--ink-2); }
+.tier[aria-pressed="true"] { border-color: var(--verdigris); box-shadow: inset 0 0 0 1px var(--verdigris); background: var(--verdigris-soft); }
+.tier[aria-pressed="true"] .t-total { color: var(--verdigris); }
+@media (max-width: 560px) { .tier .t-tag { display: none; } .tier { padding: 14px 12px; } }
+.budget-body { display: grid; gap: 24px; margin-top: 24px; }
+@media (min-width: 940px) { .budget-body { grid-template-columns: minmax(0, 1.25fr) minmax(0, 0.75fr); gap: 32px; } }
+.bars { border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface); padding: 20px; display: grid; gap: 10px; min-width: 0; }
+.bars-head { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; align-items: baseline; margin-bottom: 4px; }
+.bar-row { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 4px 12px; align-items: center; position: relative; }
+.bar-row .b-label { font-size: 0.86rem; color: var(--ink-2); min-width: 0; }
+.bar-row .b-val { font-family: var(--font-mono); font-size: 0.82rem; color: var(--ink); text-align: right; }
+.bar-track { grid-column: 1 / -1; height: 10px; border-radius: 0 4px 4px 0; position: relative; }
+.bar-fill { height: 100%; width: 0; background: var(--verdigris); border-radius: 0 4px 4px 0; transition: width .6s cubic-bezier(.2, .8, .2, 1); }
+.bar-row:hover .bar-fill, .bar-row:focus-within .bar-fill { background: var(--bronze); }
+.bar-row .b-share { position: absolute; right: 0; top: -22px; font-family: var(--font-mono); font-size: 0.72rem; color: var(--ground); background: var(--ink); padding: 2px 6px; border-radius: 6px; opacity: 0; transition: opacity .15s; pointer-events: none; }
+.bar-row:hover .b-share { opacity: 1; }
+.side { display: grid; gap: 16px; align-content: start; }
+.panel { border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface); padding: 20px; display: grid; gap: 12px; }
+.panel h3 { font-family: var(--font-display); font-size: 1.5rem; }
+.big-answer { font-family: var(--font-display); font-size: 3rem; line-height: 1; color: var(--verdigris); }
+.check { display: flex; gap: 10px; align-items: center; font-size: 0.92rem; cursor: pointer; }
+.check input { width: 18px; height: 18px; accent-color: var(--verdigris); }
+.panel ul { margin: 0; padding-left: 18px; display: grid; gap: 6px; font-size: var(--fs-small); color: var(--ink-2); }
+
+/* ---------- red lines ---------- */
+.law .cell {
+  width: 100%; text-align: left; cursor: pointer; font: 500 0.78rem var(--font-mono);
+  padding: 8px 10px; border-radius: 8px; border: 1px solid transparent; background: transparent; color: var(--ink);
+  display: flex; align-items: center; gap: 8px; white-space: nowrap;
+}
+.law .cell::before { content: ""; width: 9px; height: 9px; border-radius: 2px; flex: none; }
+.law .cell.red::before { background: var(--status-crit); }
+.law .cell.amber::before { background: var(--status-warn); }
+.law .cell.ok::before { background: var(--status-good); border-radius: 50%; }
+.law .cell:hover, .law .cell[aria-pressed="true"] { border-color: var(--line); background: var(--surface-2); }
+.law .cell[aria-pressed="true"] { border-color: var(--bronze); }
+.law td, .law th { padding: 8px 10px; }
+.law td.topic { font-weight: 600; font-family: var(--font-body); font-size: 0.9rem; white-space: nowrap; }
+.law td.rule { color: var(--ink-2); min-width: 220px; }
+.law-note { margin-top: 14px; padding: 16px 18px; border-radius: 12px; border: 1px dashed var(--line); color: var(--ink-2); min-height: 64px; }
+.law-note b { color: var(--ink); }
+.nevers { display: grid; gap: 10px; margin-top: 32px; grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr)); }
+.never { padding: 14px 16px; border-radius: 12px; border: 1px solid var(--line); background: var(--surface); display: grid; gap: 4px; }
+.never b { display: flex; gap: 8px; align-items: baseline; }
+.never b::before { content: "✕"; color: var(--status-crit); font-family: var(--font-mono); font-weight: 500; }
+.never span { color: var(--muted); font-size: var(--fs-small); }
+
+/* ---------- road ---------- */
+.road { display: grid; gap: 0; position: relative; }
+.phase { display: grid; grid-template-columns: 48px minmax(0, 1fr); gap: 16px; padding-bottom: 28px; position: relative; }
+.phase::before { content: ""; position: absolute; left: 23px; top: 48px; bottom: 0; width: 2px; background: var(--line); }
+.phase:last-child::before { display: none; }
+.phase .dot { width: 48px; height: 48px; border-radius: 50%; display: grid; place-items: center; font-family: var(--font-display); font-size: 1.4rem; border: 1px solid var(--line); background: var(--surface); }
+.phase.now .dot { background: var(--verdigris); border-color: var(--verdigris); color: var(--ground); }
+.phase .body { display: grid; gap: 8px; padding-top: 6px; }
+.phase h3 { font-family: var(--font-display); font-size: 1.7rem; line-height: 1.1; }
+.phase p { color: var(--ink-2); font-size: var(--fs-small); max-width: 70ch; }
+.gate { border-left: 2px solid var(--bronze); padding: 8px 14px; background: var(--bronze-soft); border-radius: 0 10px 10px 0; font-size: var(--fs-small); max-width: 70ch; }
+.gate .label { color: var(--bronze); display: block; margin-bottom: 2px; }
+
+/* ---------- ask ---------- */
+.asks { display: grid; gap: 16px; }
+@media (min-width: 860px) { .asks { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+.ask { padding: 26px; border-radius: var(--radius); border: 1px solid var(--line); background: var(--surface); display: grid; gap: 10px; align-content: start; }
+.ask .n { font-family: var(--font-display); font-size: 3rem; line-height: 1; color: var(--bronze); }
+.ask h3 { font-size: 1.15rem; font-weight: 600; font-family: var(--font-body); }
+.ask p { color: var(--ink-2); font-size: var(--fs-small); }
+.closing { margin-top: clamp(48px, 7vw, 88px); font-family: var(--font-display); font-size: clamp(2rem, 5.4vw, 4rem); line-height: 1.08; max-width: 18ch; }
+.closing span { color: var(--verdigris); }
+.repos { display: grid; gap: 8px; margin-top: 32px; grid-template-columns: repeat(auto-fill, minmax(min(100%, 230px), 1fr)); }
+.repo { padding: 14px 16px; border: 1px solid var(--line); border-radius: 12px; display: grid; gap: 2px; background: var(--surface); }
+.repo code { font-family: var(--font-mono); font-size: 0.85rem; color: var(--ink); overflow-wrap: anywhere; }
+.repo span { color: var(--muted); font-size: 0.82rem; }
+footer { padding-block: 40px 56px; border-top: 1px solid var(--line); color: var(--muted); font-size: 0.85rem; }
+footer .wrap { display: grid; gap: 8px; }
+
+@media (prefers-reduced-motion: reduce) {
+  .bar-fill { transition: none; }
+  .btn { transition: none; }
+}
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="wrap">
+    <a class="wordmark" href="#top">MEDUSA</a>
+    <span class="label now" id="nowLabel">Plan for the funding decision</span>
+  </div>
+  <div class="progress" aria-hidden="true"><span id="progressBar"></span></div>
+</header>
+
+<nav class="rail" aria-label="Chapters" id="rail">
+  <a href="#problem">Problem</a>
+  <a href="#proof">Proof</a>
+  <a href="#loop">The loop</a>
+  <a href="#network">Network</a>
+  <a href="#niches">Niches</a>
+  <a href="#money">Money</a>
+  <a href="#stack">Stack</a>
+  <a href="#budget">Budget</a>
+  <a href="#redlines">Red lines</a>
+  <a href="#road">Road</a>
+  <a href="#ask">The ask</a>
+</nav>
+
+<main id="top">
+
+<!-- ================= HERO ================= -->
+<section class="hero" data-chapter="Project Medusa">
+  <div class="wrap hero-grid">
+    <div>
+      <p class="label">Project Medusa · Plan for the funding decision · October 2026</p>
+      <h1>MEDUSA</h1>
+      <h2 class="bait-title">Cast the <span class="bait">right bait<svg class="hookline" viewBox="0 70 40 70" aria-hidden="true"><path d="M20 0 V112" stroke="currentColor" stroke-width="1.2" fill="none" opacity=".6"/><path d="M20 112 v16 a8 8 0 1 1 -11 -7" stroke="#c9d0c9" stroke-width="2.4" fill="none" stroke-linecap="round"/><path d="M20 100 l7 9 -7 9 -7 -9 z" fill="#f2c057"/></svg></span>.<br>Hook the right <em>opportunity</em>.</h2>
+      <p class="tag">One brain. A thousand heads.</p>
+      <p class="lead">One system that runs hundreds of social media pages across every niche we serve, makes their content automatically, and turns free organic attention into money for our clients and for us.</p>
+      <div class="actions">
+        <a class="btn primary" href="#loop">See how it works</a>
+        <a class="btn" href="#budget">Jump to the budget</a>
+      </div>
+      <div class="facts">
+        <div><strong class="num">11</strong><span class="label">niches planned</span></div>
+        <div><strong class="num">7+</strong><span class="label">platforms</span></div>
+        <div><strong class="num">5</strong><span class="label">languages</span></div>
+        <div><strong class="num">$135</strong><span class="label">to start / month</span></div>
+      </div>
+    </div>
+    <figure class="hero-figure">
+      <canvas id="heroCanvas" aria-label="Animated sketch: one central core with dozens of serpent-like links reaching out to pages. Pulses travel outward as posts and back as data." role="img"></canvas>
+      <figcaption class="label">Live sketch · 1 brain → 48 pages · pulses out = posts, pulses back = data</figcaption>
+    </figure>
+  </div>
+</section>
+
+<!-- ================= PROBLEM ================= -->
+<section class="band" id="problem" data-chapter="The problem">
+  <div class="wrap">
+    <div class="chapter-head">
+      <p class="label"><b>01</b> · The problem</p>
+      <h2>Today we rent our reach.</h2>
+      <p class="lead">Clients come to us for exposure. We go to other people's pages to get it. That works, but it caps how far we can grow.</p>
+    </div>
+    <div class="trio">
+      <div class="pain"><span class="word">Rented</span><p>We buy posts on pages other people own. They set the price, they keep the audience, and they can say no.</p></div>
+      <div class="pain"><span class="word">Manual</span><p>Every campaign is negotiated, made and posted by hand. More clients means more of our hours.</p></div>
+      <div class="pain"><span class="word">Unproven</span><p>We have no live numbers to show a new client, so every sale starts from zero trust.</p></div>
+    </div>
+    <p class="turn">What if we <em>owned</em> the pages, the content machine and the proof?</p>
+  </div>
+</section>
+
+<!-- ================= PROOF ================= -->
+<section class="band alt" id="proof" data-chapter="The proof">
+  <div class="wrap">
+    <div class="chapter-head">
+      <p class="label"><b>02</b> · The proof</p>
+      <h2>Others already built pieces of this machine.</h2>
+      <p class="lead">We studied the companies and free tools that already do parts of Medusa. Nobody combines them for South Asian languages at low cost. That is our opening.</p>
+    </div>
+    <div class="proof">
+      <article class="case">
+        <span class="big num" data-count="1.7" data-prefix="$" data-suffix="M+" data-dec="1">$1.7M+</span>
+        <span class="who">Whop clipping marketplace</span>
+        <p>Paid to 98,000+ creators who post brand clips on their own accounts, at about $0.50–1.50 per 1,000 views.</p>
+        <span class="take">→ Our Creator Network, for South Asia</span>
+      </article>
+      <article class="case">
+        <span class="big num" data-count="110" data-prefix="~" data-suffix="k">~110k</span>
+        <span class="who">MoneyPrinterTurbo</span>
+        <p>GitHub stars on a free, open-source tool that turns a topic into a finished short video with script, voice and subtitles.</p>
+        <span class="take">→ The content factory is free</span>
+      </article>
+      <article class="case">
+        <span class="big num" data-count="19" data-suffix="+">19+</span>
+        <span class="who">Postiz</span>
+        <p>Networks this free, self-hosted scheduler can post to, including Facebook, Instagram, TikTok, YouTube, X, LinkedIn and Bluesky.</p>
+        <span class="take">→ We don't rebuild what exists</span>
+      </article>
+      <article class="case">
+        <span class="big">Pages</span>
+        <span class="who">LADbible · UNILAD · Pubity</span>
+        <p>Dozens of tight sub-niche pages. Cheap viral posts build the reach; branded content sold to advertisers pays for it.</p>
+        <span class="take">→ Same model, in our languages</span>
+      </article>
+      <article class="case">
+        <span class="big">Rev-share</span>
+        <span class="who">Jellysmack</span>
+        <p>Takes a creator's videos to platforms they don't use and keeps a share of only that new income.</p>
+        <span class="take">→ Our Creator Management offer</span>
+      </article>
+      <article class="case warn">
+        <span class="big">2018</span>
+        <span class="who">The warning</span>
+        <p>Facebook removed 800+ publishers for clickbait and spam. India's viral page network WittyFeed lost its Facebook reach. In 2025 Meta acted on ~500,000 accounts for fake engagement.</p>
+        <span class="take">→ Many platforms, no fakes, ever</span>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ================= LOOP ================= -->
+<section class="band" id="loop" data-chapter="The loop">
+  <div class="wrap">
+    <div class="chapter-head">
+      <p class="label"><b>03</b> · The loop</p>
+      <h2>Six steps, every day, on autopilot.</h2>
+      <p class="lead">This loop runs 24/7 for every niche. A person only steps in at Guard, for about 5–15 minutes a day per niche. Tap a step.</p>
+    </div>
+    <div class="loop">
+      <svg class="wheel" id="wheel" viewBox="-40 -40 480 480" role="group" aria-label="The Medusa loop"></svg>
+      <div class="stage-panel" id="stagePanel" aria-live="polite">
+        <p class="label" id="stageNo">Step 1 of 6</p>
+        <h3 id="stageName">Scout</h3>
+        <p class="what" id="stageWhat">Every few hours, Medusa checks each niche and country for outliers: posts doing 3–10x their channel's normal views, rising hashtags and sounds, and search trends.</p>
+        <div>
+          <p class="label" style="margin-bottom:8px">Tools</p>
+          <div class="chips" id="stageTools"></div>
+        </div>
+        <div class="human"><strong id="stageHuman">0 min</strong><span class="label">human time</span></div>
+        <div class="stage-nav">
+          <button class="btn" type="button" id="prevStage" aria-label="Previous step">←</button>
+          <button class="btn" type="button" id="nextStage" aria-label="Next step">→</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= NETWORK ================= -->
+<section class="band alt" id="network" data-chapter="The network">
+  <div class="wrap">
+    <div class="chapter-head">
+      <p class="label"><b>04</b> · The network</p>
+      <h2>Grow from 15 pages to a thousand.</h2>
+      <p class="lead">Move the sliders to see how the network grows and what it demands. One idea becomes about 12 posts, so the factory only needs a handful of "master" pieces a day.</p>
+    </div>
+    <div class="calc">
+      <div class="controls">
+        <div class="control">
+          <div class="row"><label for="nNiches">Niches</label><output id="oNiches" for="nNiches" class="num">1</output></div>
+          <input type="range" id="nNiches" min="1" max="12" value="1">
+        </div>
+        <div class="control">
+          <div class="row"><label for="nPages">Pages per platform, per niche</label><output id="oPages" for="nPages" class="num">3</output></div>
+          <input type="range" id="nPages" min="1" max="20" value="3">
+        </div>
+        <div class="control">
+          <div class="row"><label for="nPosts">Posts per page, per day</label><output id="oPosts" for="nPosts" class="num">2</output></div>
+          <input type="range" id="nPosts" min="1" max="4" value="2">
+        </div>
+        <div class="control">
+          <span class="lbl" id="platLbl">Platforms</span>
+          <div class="toggles" id="platToggles" role="group" aria-labelledby="platLbl"></div>
+        </div>
+        <p class="note">View range assumes 150–1,500 views per post for young pages with no paid boosting. It is an illustration for planning, and the pilot will replace it with real numbers.</p>
+      </div>
+      <div class="outputs">
+        <div class="tiles">
+          <div class="tile hi"><span class="label">Pages</span><strong class="num" id="tPages">15</strong></div>
+          <div class="tile"><span class="label">Posts / day</span><strong class="num" id="tPostsDay">30</strong></div>
+          <div class="tile"><span class="label">Master pieces / day</span><strong class="num" id="tMasters">3</strong></div>
+          <div class="tile"><span class="label">Human review / day</span><strong class="num" id="tReview">7 min</strong></div>
+          <div class="tile hi"><span class="label">Monthly views (est.)</span><strong class="num" id="tViews">135k–1.4M</strong></div>
+          <div class="tile"><span class="label">Budget tier</span><strong id="tTier">Seed</strong></div>
+        </div>
+        <div class="dots-wrap">
+          <canvas id="dots" role="img" aria-label="One dot per page, grouped by platform"></canvas>
+          <div class="dots-tip" id="dotsTip" hidden></div>
+          <p class="note" style="margin-top:8px">One dot = one page, grouped by platform.</p>
+        </div>
+      </div>
+    </div>
+
+    <h3 style="font-family:var(--font-display);font-size:1.8rem;margin-top:56px">Every page has its own angle</h3>
+    <p class="lead" style="margin-top:8px">Ten copies of one page compete with each other and look like spam. Each Medusa page gets its own angle, language and audience. Example: cricket on Facebook.</p>
+    <div class="angles">
+      <div class="angle"><b>Score Pulse</b><span>Live score cards · Bangla</span></div>
+      <div class="angle"><b>Cricket Data Lab</b><span>Records and stat charts · English</span></div>
+      <div class="angle"><b>Gully Cricket Memes</b><span>Fan humour · Bangla</span></div>
+      <div class="angle"><b>Pitch Report</b><span>Match previews · Urdu</span></div>
+      <div class="angle"><b>Women in Blue &amp; Green</b><span>Women's cricket · English / Bangla</span></div>
+      <div class="angle"><b>Dugout Hindi</b><span>Player stories · Hindi</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= NICHES ================= -->
+<section class="band" id="niches" data-chapter="The niches">
+  <div class="wrap">
+    <div class="chapter-head">
+      <p class="label"><b>05</b> · The niches</p>
+      <h2>Start where attention is free.</h2>
+      <p class="lead">We recommend opening with <strong>cricket</strong>: real matches create new content every day, in all four of our South Asian languages. <strong>Music</strong> follows once the loop runs. Tap a niche for its rules.</p>
+    </div>
+    <div class="filters" id="nicheFilters" role="group" aria-label="Filter niches by status"></div>
+    <div class="niche-grid" id="nicheGrid"></div>
+
+  </div>
+</section>
+
+<!-- ================= MONEY ================= -->
+<section class="band alt" id="money" data-chapter="The money">
+  <div class="wrap">
+    <div class="chapter-head">
+      <p class="label"><b>06</b> · The money</p>
+      <h2>Seven ways the attention pays.</h2>
+      <p class="lead">One engine feeds every line. The Exposure Network brings cash first because it sells reach on pages we already built. Prices are starting ideas to test in the pilot.</p>
+    </div>
+    <div class="lines">
+      <div class="line wide">
+        <div class="head"><h3>Exposure Network</h3><span class="price">$100–400 per campaign · $500–1,500 / month retainers</span></div>
+        <p>The "one-click" product. A client picks niches, pages and dates; the campaign runs natively across pages we own; a live report link shows views and clicks.</p>
+      </div>
+      <div class="line">
+        <div class="head"><h3>Creator Network</h3><span class="price">margin on paid views</span></div>
+        <p>Real micro-creators in Bangladesh, India, Pakistan, Thailand and the Philippines post campaigns on their own accounts, paid per verified 1,000 views. Never charge them to join.</p>
+      </div>
+      <div class="line">
+        <div class="head"><h3>Community Hub</h3><span class="price">sponsored posts · services</span></div>
+        <p>Value-first Facebook Groups such as "F-commerce Sellers BD", where members promote themselves under fair rules, and buy our marketing services.</p>
+      </div>
+      <div class="line">
+        <div class="head"><h3>Creator &amp; Artist Management</h3><span class="price">fee + % of deals</span></div>
+        <p>Take real and AI talent from zero to known, or push existing creators onto new platforms for a revenue share. AI talent is always labelled as AI.</p>
+      </div>
+      <div class="line">
+        <div class="head"><h3>Music Division</h3><span class="price">royalties · tickets · promo packs</span></div>
+        <p>Genre pages, a label, song-promotion packs seeded through hundreds of creators, and a collective that grows from club nights to festivals.</p>
+      </div>
+      <div class="line">
+        <div class="head"><h3>Education</h3><span class="price">courses · workshops</span></div>
+        <p>Free AI and digital-skills tutorials build trust. Paid mini-courses follow. The best students join the Creator Network.</p>
+      </div>
+      <div class="line">
+        <div class="head"><h3>Payouts &amp; affiliate</h3><span class="price">platform revenue · commissions</span></div>
+        <p>YouTube and Facebook payouts, product affiliate links, and only regulated financial products.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= STACK ================= -->
+<section class="band" id="stack" data-chapter="The stack">
+  <div class="wrap">
+    <div class="chapter-head">
+      <p class="label"><b>07</b> · The stack</p>
+      <h2>Built mostly from free parts.</h2>
+      <p class="lead">Open-source tools handle volume. Paid credits go only to the hero pieces that carry a campaign.</p>
+    </div>
+    <div class="stack" id="stackRows"></div>
+    <div class="legend-row"><span class="chip free">free / open source</span><span class="chip paid">paid</span></div>
+
+    <h3 style="font-family:var(--font-display);font-size:1.8rem;margin-top:56px;margin-bottom:16px">Paid tools: what to buy, and when</h3>
+    <div class="table-scroll">
+      <table>
+        <thead><tr><th>Tool</th><th>Price (Oct 2026)</th><th>Verdict</th><th>Why</th></tr></thead>
+        <tbody>
+          <tr><td class="tool">Claude Max</td><td class="num">$100 / $200</td><td><span class="verdict v-buy">Buy at Seed</span></td><td>The engineer that builds and runs Medusa. 24/7 automation adds a small capped API budget.</td></tr>
+          <tr><td class="tool">Kling AI</td><td class="num">free daily · ~$7–10</td><td><span class="verdict v-buy">Buy at Seed</span></td><td>Cheapest good-quality AI video.</td></tr>
+          <tr><td class="tool">Higgsfield AI</td><td class="num">~$15–129</td><td><span class="verdict v-later">Growth tier</span></td><td>Best for UGC-style video and consistent AI influencers. Too costly per clip for volume.</td></tr>
+          <tr><td class="tool">Veo / Seedance</td><td class="num">~$0.10–0.75 per clip</td><td><span class="verdict v-later">Pay per use</span></td><td>One-off hero shots with no subscription.</td></tr>
+          <tr><td class="tool">ElevenLabs</td><td class="num">$5–22+</td><td><span class="verdict v-later">Growth tier</span></td><td>Premium voices. Free Edge TTS covers Bangla, Hindi, Urdu and Thai for volume.</td></tr>
+          <tr><td class="tool">Grok (SuperGrok)</td><td class="num">subscription</td><td><span class="verdict v-later">Test 1 month</span></td><td>Only if Kling and Veo leave a gap.</td></tr>
+          <tr><td class="tool">VEED</td><td class="num">subscription</td><td><span class="verdict v-skip">Skip</span></td><td>CapCut, FFmpeg and Canva already cover it.</td></tr>
+          <tr><td class="tool">Arcads · MakeUGC</td><td class="num">~$49–220</td><td><span class="verdict v-skip">Skip for now</span></td><td>Same job as Higgsfield or Kling plus free lip-sync, at a higher price.</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="two">
+      <div class="hw">
+        <h3>The home PC's job</h3>
+        <p class="note">i5-12th gen · RX 6700 XT 12 GB · 16 GB RAM · 2 TB SSD</p>
+        <ul>
+          <li><span class="mark ok">● good</span><b>Editing and encoding</b> with FFmpeg and the AMD hardware encoder</li>
+          <li><span class="mark ok">● good</span><b>Captions</b> (Whisper) and <b>local AI text</b> (Qwen via Ollama)</li>
+          <li><span class="mark ok">● good</span><b>Template videos</b> and faceless shorts</li>
+          <li><span class="mark meh">▲ with effort</span><b>Image generation</b>. This AMD card needs a Linux/ROCm or ZLUDA workaround</li>
+          <li><span class="mark no">✕ not for</span><b>Modern AI video</b>. It needs 24 GB+ and CUDA, so rent a cloud GPU by the hour</li>
+          <li><span class="mark no">✕ not for</span><b>24/7 services</b>. Power cuts. Those live on the VPS</li>
+        </ul>
+      </div>
+      <div class="hw">
+        <h3>Upgrades, best value first</h3>
+        <ol>
+          <li><b>RAM 16 → 32 GB</b> · $60–100. AI models spill into system RAM.</li>
+          <li><b>UPS</b> · $80–150. Load-shedding kills overnight renders.</li>
+          <li><b>Ubuntu dual-boot</b> · free. AMD AI tools behave far better on Linux.</li>
+          <li><b>Used RTX 3090 24 GB</b> · $650–800, at Scale. Local video and AI-talent training.</li>
+        </ol>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= BUDGET ================= -->
+<section class="band alt" id="budget" data-chapter="The budget">
+  <div class="wrap">
+    <div class="chapter-head">
+      <p class="label"><b>08</b> · The budget</p>
+      <h2>Start at $135 a month.</h2>
+      <p class="lead">Three tiers. Each one unlocks only when the one before it hits its target, so money follows proof. Pick a tier to see where every dollar goes.</p>
+    </div>
+    <div class="tiers" id="tiers" role="group" aria-label="Budget tier"></div>
+    <div class="budget-body">
+      <div class="bars" id="bars" aria-live="polite"></div>
+      <div class="side">
+        <div class="panel">
+          <h3>Break-even</h3>
+          <div class="control">
+            <div class="row"><label for="pkg">Average client package</label><output id="oPkg" for="pkg" class="num">$200</output></div>
+            <input type="range" id="pkg" min="100" max="400" step="25" value="200">
+          </div>
+          <div><span class="big-answer num" id="beClients">1</span> <span id="beText">client a month covers Seed</span></div>
+          <label class="check"><input type="checkbox" id="incExisting"> Include current subscriptions (~$55)</label>
+        </div>
+        <div class="panel">
+          <h3>One-time, optional</h3>
+          <ul>
+            <li>RAM 16 → 32 GB · $60–100 · Seed</li>
+            <li>UPS for load-shedding · $80–150 · Seed</li>
+            <li>Used RTX 3090 24 GB · $650–800 · Scale</li>
+          </ul>
+          <p class="note">Every API gets a hard monthly spend cap. Prices checked October 2026.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= RED LINES ================= -->
+<section class="band" id="redlines" data-chapter="Red lines">
+  <div class="wrap">
+    <div class="chapter-head">
+      <p class="label"><b>09</b> · Red lines</p>
+      <h2>What we will never do, and why that keeps Medusa alive.</h2>
+      <p class="lead">Some shortcuts break the law in our target countries, or are the fastest way to get a whole network deleted. Medusa blocks them automatically. Tap a square for the law.</p>
+    </div>
+    <div class="table-scroll law">
+      <table>
+        <thead><tr><th>Topic</th><th>Bangladesh</th><th>India</th><th>Pakistan</th><th>Thailand</th><th>Medusa rule</th></tr></thead>
+        <tbody id="lawBody"></tbody>
+      </table>
+    </div>
+    <div class="law-note" id="lawNote" aria-live="polite"><b>Surrogacy ads, India:</b> the Surrogacy (Regulation) Act 2021 bans commercial surrogacy and advertising it, with up to 10 years in prison.</div>
+    <p class="note" style="margin-top:10px">Research notes, not legal advice. A local lawyer signs off before any gated niche launches.</p>
+
+    <div class="nevers">
+      <div class="never"><b>Bots, fake views, bought followers, click farms</b><span>The surest way to lose every page at once.</span></div>
+      <div class="never"><b>Buying accounts or dodging bans</b><span>Same outcome, and no payouts.</span></div>
+      <div class="never"><b>Re-uploading other people's videos</b><span>YouTube and Meta now demonetize and throttle it.</span></div>
+      <div class="never"><b>Re-streaming live sports</b><span>Copyright strikes end channels.</span></div>
+      <div class="never"><b>Bot streams on music</b><span>Spotify removed 75M+ spam tracks. Fraud cases are criminal.</span></div>
+      <div class="never"><b>Charging workers to join</b><span>That is the task-scam pattern. We pay for verified work only.</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= ROAD ================= -->
+<section class="band alt" id="road" data-chapter="The road">
+  <div class="wrap">
+    <div class="chapter-head">
+      <p class="label"><b>10</b> · The road</p>
+      <h2>Funding follows proof.</h2>
+      <p class="lead">No calendar promises. Each phase ends at a gate, a number we can check. Passing the gate unlocks the next budget tier.</p>
+    </div>
+    <div class="road">
+      <div class="phase now">
+        <span class="dot">0</span>
+        <div class="body">
+          <p class="label">Foundation · Seed budget</p>
+          <h3>Build the machine</h3>
+          <p>Server with Postiz, n8n and the database. Brain, workers and dashboard version 1. Apply for TikTok, Meta and YouTube API access.</p>
+          <div class="gate"><span class="label">Gate</span>One idea flows from Scout to Publish to Metrics on 3 platforms with no manual step except the Guard approval.</div>
+        </div>
+      </div>
+      <div class="phase">
+        <span class="dot">1</span>
+        <div class="body">
+          <p class="label">Pilot · Seed budget</p>
+          <h3>Cricket, about 15 pages, four languages</h3>
+          <p>3 pages per platform in Bangla, Hindi, Urdu and English. Posting ramps up only while engagement holds.</p>
+          <div class="gate"><span class="label">Gate → unlocks Growth</span>1M+ monthly organic views · 30+ original pieces a day with ≤15 min of review · first paying client with a live report.</div>
+        </div>
+      </div>
+      <div class="phase">
+        <span class="dot">2</span>
+        <div class="body">
+          <p class="label">Expansion · Growth budget</p>
+          <h3>10–20 pages per platform, three niches</h3>
+          <p>Add Music and one of Beauty, E-commerce or AI teaching. Launch the Creator Network and the first Community Hub group.</p>
+          <div class="gate"><span class="label">Gate → unlocks Scale</span>Revenue covers the Growth tier for 2 months in a row.</div>
+        </div>
+      </div>
+      <div class="phase">
+        <span class="dot">3</span>
+        <div class="body">
+          <p class="label">Productize · Scale budget</p>
+          <h3>One-click campaigns for clients</h3>
+          <p>Client portal, Creator and Artist Management, first labelled AI talent, Music Division releases and the first collective event. Gated niches open one by one after legal sign-off.</p>
+        </div>
+      </div>
+      <div class="phase">
+        <span class="dot">4</span>
+        <div class="body">
+          <p class="label">Own the stack</p>
+          <h3>Every niche, more countries, our own GPUs</h3>
+          <p>Philippines and Sri Lanka, in-house video generation, events and concerts, and optionally Medusa sold as a white-label tool to other agencies.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= ASK ================= -->
+<section class="band" id="ask" data-chapter="The ask">
+  <div class="wrap">
+    <div class="chapter-head">
+      <p class="label"><b>11</b> · The ask</p>
+      <h2>Three decisions today.</h2>
+    </div>
+    <div class="asks">
+      <div class="ask"><span class="n">1</span><h3>Approve the Seed tier</h3><p>$135 a month in new cash, plus $150–250 once for RAM and a UPS.</p></div>
+      <div class="ask"><span class="n">2</span><h3>Choose the pilot niche</h3><p>We recommend cricket for reach, with music right behind it.</p></div>
+      <div class="ask"><span class="n">3</span><h3>Agree the gate numbers</h3><p>The targets that unlock the Growth tier. Ours: 1M monthly views, 30 pieces a day, first paying client.</p></div>
+    </div>
+    <p class="closing">Approve Seed. Judge the gate. <span>Fund the next head.</span></p>
+    <div class="repos">
+      <div class="repo"><code>project-Medusa</code><span>Plan, research, data, this presentation</span></div>
+      <div class="repo"><code>medusa-backend</code><span>The brain: API, database, Guard</span></div>
+      <div class="repo"><code>meduza-engine</code><span>The workers: scout, create, publish</span></div>
+      <div class="repo"><code>Medusa-</code><span>The one dashboard</span></div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    <p>Full plan, data files and sources live in the <code>project-Medusa</code> repository (docs/ and data/).</p>
+    <p>Prices and platform rules checked October 2026. Check again before buying. Legal notes are research, not legal advice.</p>
+  </div>
+</footer>
+
+<script>
+(function () {
+  "use strict";
+  var reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var css = function (name) { return getComputedStyle(document.documentElement).getPropertyValue(name).trim(); };
+  var palette = {};
+  function readPalette() {
+    palette = { ink: css("--ink"), muted: css("--muted"), line: css("--line"), verdigris: css("--verdigris"), bronze: css("--bronze"), ground: css("--ground"), surface: css("--surface") };
+  }
+  readPalette();
+  var themeListeners = [];
+  function onTheme() { readPalette(); themeListeners.forEach(function (f) { f(); }); }
+  try { window.matchMedia("(prefers-color-scheme: light)").addEventListener("change", onTheme); } catch (e) {}
+  new MutationObserver(onTheme).observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
+
+  function fit(canvas) {
+    var dpr = Math.min(window.devicePixelRatio || 1, 2);
+    var r = canvas.getBoundingClientRect();
+    canvas.width = Math.max(1, Math.round(r.width * dpr));
+    canvas.height = Math.max(1, Math.round(r.height * dpr));
+    var ctx = canvas.getContext("2d");
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    return { ctx: ctx, w: r.width, h: r.height };
+  }
+  function rng(seed) { return function () { seed |= 0; seed = seed + 0x6D2B79F5 | 0; var t = Math.imul(seed ^ seed >>> 15, 1 | seed); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
+  function hexA(hex, a) {
+    var h = hex.replace("#", "");
+    if (h.length === 3) h = h.split("").map(function (c) { return c + c; }).join("");
+    var n = parseInt(h, 16);
+    return "rgba(" + (n >> 16 & 255) + "," + (n >> 8 & 255) + "," + (n & 255) + "," + a + ")";
+  }
+
+  /* ---------------- hero: the serpent network ---------------- */
+  (function hero() {
+    var canvas = document.getElementById("heroCanvas");
+    if (!canvas) return;
+    var st = fit(canvas), rand = rng(7), N = 48, snakes = [];
+    for (var i = 0; i < N; i++) {
+      snakes.push({
+        a: (i / N) * Math.PI * 2 + (rand() - 0.5) * 0.12,
+        len: 0.62 + rand() * 0.38,
+        k: 1.4 + rand() * 1.6,
+        sp: 0.5 + rand() * 0.9,
+        ph: rand() * Math.PI * 2,
+        amp: 0.05 + rand() * 0.07,
+        ps: 0.08 + rand() * 0.12,
+        p0: rand(),
+        back: rand() < 0.35,
+        tone: rand() < 0.22 ? "bronze" : "verdigris"
+      });
+    }
+    var SEG = 26, running = false, visible = true, t0 = performance.now();
+    function point(s, tt, time, rx, ry, cx, cy) {
+      var bx = cx + Math.cos(s.a) * rx * s.len * tt;
+      var by = cy + Math.sin(s.a) * ry * s.len * tt;
+      var off = Math.sin(tt * s.k * Math.PI + time * s.sp + s.ph) * s.amp * Math.min(rx, ry) * tt * 1.4;
+      return [bx - Math.sin(s.a) * off, by + Math.cos(s.a) * off];
+    }
+    function draw(time) {
+      var ctx = st.ctx, w = st.w, h = st.h;
+      ctx.clearRect(0, 0, w, h);
+      var cx = w / 2, cy = h / 2, rx = w * 0.47, ry = h * 0.46;
+      ctx.lineWidth = 1;
+      for (var r = 1; r <= 3; r++) {
+        ctx.beginPath();
+        ctx.ellipse(cx, cy, rx * r / 3.2, ry * r / 3.2, 0, 0, Math.PI * 2);
+        ctx.strokeStyle = hexA(palette.line, 0.9);
+        ctx.setLineDash(r === 3 ? [2, 6] : []);
+        ctx.stroke();
+      }
+      ctx.setLineDash([]);
+      snakes.forEach(function (s) {
+        var col = palette[s.tone], prev = point(s, 0.08, time, rx, ry, cx, cy);
+        for (var j = 1; j <= SEG; j++) {
+          var tt = 0.08 + (j / SEG) * 0.92, p = point(s, tt, time, rx, ry, cx, cy);
+          ctx.beginPath(); ctx.moveTo(prev[0], prev[1]); ctx.lineTo(p[0], p[1]);
+          ctx.strokeStyle = hexA(col, 0.85 - tt * 0.55);
+          ctx.lineWidth = (1 - tt) * 3 + 0.6;
+          ctx.lineCap = "round";
+          ctx.stroke();
+          prev = p;
+        }
+        var end = point(s, 1, time, rx, ry, cx, cy);
+        ctx.beginPath(); ctx.arc(end[0], end[1], 3.6, 0, Math.PI * 2);
+        ctx.fillStyle = col; ctx.fill();
+        ctx.beginPath(); ctx.arc(end[0], end[1], 7, 0, Math.PI * 2);
+        ctx.strokeStyle = hexA(col, 0.35); ctx.lineWidth = 1; ctx.stroke();
+        var pp = (s.p0 + time * s.ps) % 1; if (s.back) pp = 1 - pp;
+        var q = point(s, 0.08 + pp * 0.92, time, rx, ry, cx, cy);
+        var g = ctx.createRadialGradient(q[0], q[1], 0, q[0], q[1], 7);
+        g.addColorStop(0, hexA(s.back ? palette.bronze : palette.ink, 0.95));
+        g.addColorStop(1, hexA(s.back ? palette.bronze : palette.ink, 0));
+        ctx.fillStyle = g; ctx.beginPath(); ctx.arc(q[0], q[1], 7, 0, Math.PI * 2); ctx.fill();
+      });
+      var core = Math.min(rx, ry) * 0.2;
+      var cg = ctx.createRadialGradient(cx, cy, 0, cx, cy, core * 1.8);
+      cg.addColorStop(0, hexA(palette.bronze, 0.55));
+      cg.addColorStop(1, hexA(palette.bronze, 0));
+      ctx.fillStyle = cg; ctx.beginPath(); ctx.arc(cx, cy, core * 1.8, 0, Math.PI * 2); ctx.fill();
+      ctx.beginPath(); ctx.arc(cx, cy, core * 0.62, 0, Math.PI * 2);
+      ctx.fillStyle = palette.surface; ctx.fill();
+      ctx.strokeStyle = palette.bronze; ctx.lineWidth = 1.5; ctx.stroke();
+      ctx.fillStyle = palette.ink;
+      ctx.font = Math.round(core * 0.42) + "px Forum, serif";
+      ctx.textAlign = "center"; ctx.textBaseline = "middle";
+      ctx.fillText("M", cx, cy + 1);
+    }
+    function frame(now) {
+      if (!running) return;
+      draw((now - t0) / 1000);
+      requestAnimationFrame(frame);
+    }
+    function start() { if (reduce || running || !visible || document.hidden) return; running = true; requestAnimationFrame(frame); }
+    function stop() { running = false; }
+    draw(2.4);
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(function () { draw(reduce ? 2.4 : (performance.now() - t0) / 1000); });
+    new ResizeObserver(function () { st = fit(canvas); draw(reduce ? 2.4 : (performance.now() - t0) / 1000); }).observe(canvas);
+    new IntersectionObserver(function (es) { visible = es[0].isIntersecting; visible ? start() : stop(); }).observe(canvas);
+    document.addEventListener("visibilitychange", function () { document.hidden ? stop() : start(); });
+    themeListeners.push(function () { draw(reduce ? 2.4 : (performance.now() - t0) / 1000); });
+    start();
+  })();
+
+  /* ---------------- scroll progress + chapter rail ---------------- */
+  (function nav() {
+    var bar = document.getElementById("progressBar"), now = document.getElementById("nowLabel");
+    var links = Array.prototype.slice.call(document.querySelectorAll("#rail a"));
+    function onScroll() {
+      var d = document.documentElement, max = d.scrollHeight - d.clientHeight;
+      bar.style.width = (max > 0 ? (d.scrollTop / max) * 100 : 0) + "%";
+    }
+    window.addEventListener("scroll", onScroll, { passive: true }); onScroll();
+    var io = new IntersectionObserver(function (es) {
+      es.forEach(function (e) {
+        if (!e.isIntersecting) return;
+        now.textContent = e.target.getAttribute("data-chapter");
+        links.forEach(function (a) { a.classList.toggle("on", a.getAttribute("href") === "#" + e.target.id); });
+      });
+    }, { rootMargin: "-45% 0px -50% 0px" });
+    document.querySelectorAll("[data-chapter]").forEach(function (s) { io.observe(s); });
+  })();
+
+  /* ---------------- gentle entrances (content is visible at rest) ---------------- */
+  (function entrances() {
+    if (reduce || !("animate" in Element.prototype)) return;
+    var vh = window.innerHeight;
+    var items = document.querySelectorAll(".chapter-head, .pain, .case, .stage-panel, .tiles, .line, .stack-row, .niche-grid, .ask, .phase, .never, .hw");
+    var io = new IntersectionObserver(function (es) {
+      es.forEach(function (e) {
+        if (!e.isIntersecting) return;
+        io.unobserve(e.target);
+        e.target.animate([{ opacity: 0.25, transform: "translateY(18px)" }, { opacity: 1, transform: "none" }], { duration: 700, easing: "cubic-bezier(.2,.8,.2,1)" });
+      });
+    }, { threshold: 0.12 });
+    items.forEach(function (el) { if (el.getBoundingClientRect().top > vh) io.observe(el); });
+
+    var counters = document.querySelectorAll("[data-count]");
+    var cio = new IntersectionObserver(function (es) {
+      es.forEach(function (e) {
+        if (!e.isIntersecting) return;
+        cio.unobserve(e.target);
+        var el = e.target, to = parseFloat(el.dataset.count), dec = parseInt(el.dataset.dec || "0", 10);
+        var pre = el.dataset.prefix || "", suf = el.dataset.suffix || "", t0 = performance.now();
+        (function tick(n) {
+          var k = Math.min(1, (n - t0) / 1200), v = to * (1 - Math.pow(1 - k, 3));
+          el.textContent = pre + v.toFixed(dec) + suf;
+          if (k < 1) requestAnimationFrame(tick);
+        })(t0);
+      });
+    }, { threshold: 0.6 });
+    counters.forEach(function (el) { if (el.getBoundingClientRect().top > vh) cio.observe(el); });
+  })();
+
+  /* ---------------- the loop wheel ---------------- */
+  (function loop() {
+    var stages = [
+      { n: "Scout", what: "Every few hours, Medusa checks each niche and country for outliers: posts doing 3–10x their channel's normal views, rising hashtags and sounds, and search trends.", tools: [["vidIQ", "free"], ["TikTok Creative Center", "free"], ["Google Trends", "free"], ["yt-dlp", "free"], ["Playwright", "free"], ["Apify", "paid"]], human: "0 min" },
+      { n: "Brief", what: "Each winning idea becomes a plan: the hook, the angle, the format, the languages, and which pages get which version. We remake the idea, never the video.", tools: [["Claude API", "paid"], ["Qwen via Ollama", "free"], ["Niche playbooks", "free"]], human: "0 min" },
+      { n: "Create", what: "Template videos, faceless shorts, carousels, captions and voice-overs in Bangla, Hindi, Urdu, Thai and English. One idea becomes 10–30 posts.", tools: [["Remotion", "free"], ["MoneyPrinterTurbo", "free"], ["FFmpeg", "free"], ["Whisper", "free"], ["Edge TTS", "free"], ["ComfyUI", "free"], ["Canva", "paid"], ["Kling", "paid"]], human: "0 min" },
+      { n: "Guard", what: "Every post is checked for country law, platform rules, paid-post disclosure, AI labels and duplicates. Anything risky waits for a person to approve.", tools: [["Medusa Guard rules", "free"], ["Duplicate detector", "free"]], human: "5–15 min / day" },
+      { n: "Publish", what: "Variants go out across pages at each page's best hours, so no two pages post the same thing at the same time.", tools: [["Postiz", "free"], ["n8n", "free"], ["Native APIs", "free"], ["X API", "paid"]], human: "0 min" },
+      { n: "Learn", what: "Views, watch time, shares, follows and clicks come back. Scores update, so tomorrow's briefs lean toward today's winners.", tools: [["Insights APIs", "free"], ["Dub short links", "free"], ["PostgreSQL", "free"]], human: "30 min / week" }
+    ];
+    var svg = document.getElementById("wheel"), NS = "http://www.w3.org/2000/svg", C = 200, R = 160, cur = 0, auto = !reduce, timer;
+    function el(tag, attrs, parent) { var e = document.createElementNS(NS, tag); for (var k in attrs) e.setAttribute(k, attrs[k]); (parent || svg).appendChild(e); return e; }
+    el("circle", { cx: C, cy: C, r: R, class: "ring" });
+    var arc = el("path", { class: "arc", d: "" });
+    var core = el("circle", { cx: C, cy: C, r: 62, class: "core" });
+    var coreT = el("text", { x: C, y: C - 6, class: "core-t" }); coreT.textContent = "Scout";
+    var coreS = el("text", { x: C, y: C + 22, class: "core-s" }); coreS.textContent = "STEP 1 / 6";
+    var nodes = stages.map(function (s, i) {
+      var a = -Math.PI / 2 + i * (Math.PI * 2 / stages.length);
+      var g = el("g", { class: "node", tabindex: "0", role: "button", "aria-label": s.n, transform: "translate(" + (C + R * Math.cos(a)) + "," + (C + R * Math.sin(a)) + ")" });
+      el("circle", { r: 38 }, g);
+      var t = el("text", {}, g); t.textContent = s.n.toUpperCase();
+      g.addEventListener("click", function () { stopAuto(); show(i); });
+      g.addEventListener("keydown", function (ev) { if (ev.key === "Enter" || ev.key === " ") { ev.preventDefault(); stopAuto(); show(i); } });
+      return g;
+    });
+    function arcPath(i) {
+      var a0 = -Math.PI / 2, a1 = a0 + (i + 1) * (Math.PI * 2 / stages.length) - 0.001;
+      var large = (a1 - a0) > Math.PI ? 1 : 0;
+      return "M " + (C + R * Math.cos(a0)) + " " + (C + R * Math.sin(a0)) + " A " + R + " " + R + " 0 " + large + " 1 " + (C + R * Math.cos(a1)) + " " + (C + R * Math.sin(a1));
+    }
+    function show(i) {
+      cur = (i + stages.length) % stages.length;
+      var s = stages[cur];
+      nodes.forEach(function (n, k) { n.classList.toggle("on", k === cur); n.setAttribute("aria-pressed", k === cur ? "true" : "false"); });
+      arc.setAttribute("d", arcPath(cur));
+      coreT.textContent = s.n; coreS.textContent = "STEP " + (cur + 1) + " / 6";
+      document.getElementById("stageNo").textContent = "Step " + (cur + 1) + " of 6";
+      document.getElementById("stageName").textContent = s.n;
+      document.getElementById("stageWhat").textContent = s.what;
+      document.getElementById("stageHuman").textContent = s.human;
+      var box = document.getElementById("stageTools"); box.innerHTML = "";
+      s.tools.forEach(function (t) { var c = document.createElement("span"); c.className = "chip " + t[1]; c.textContent = t[0]; box.appendChild(c); });
+    }
+    function stopAuto() { auto = false; clearInterval(timer); }
+    document.getElementById("prevStage").addEventListener("click", function () { stopAuto(); show(cur - 1); });
+    document.getElementById("nextStage").addEventListener("click", function () { stopAuto(); show(cur + 1); });
+    show(0);
+    var inView = false;
+    new IntersectionObserver(function (es) { inView = es[0].isIntersecting; }).observe(svg);
+    if (auto) timer = setInterval(function () { if (auto && inView && !document.hidden) show(cur + 1); }, 4200);
+  })();
+
+  /* ---------------- network calculator ---------------- */
+  (function network() {
+    var plats = [
+      { id: "fb", name: "Facebook", on: true }, { id: "ig", name: "Instagram", on: true }, { id: "tt", name: "TikTok", on: true },
+      { id: "yt", name: "YouTube", on: true }, { id: "x", name: "X", on: true }, { id: "bs", name: "Bluesky", on: false }, { id: "li", name: "LinkedIn", on: false }
+    ];
+    var box = document.getElementById("platToggles");
+    plats.forEach(function (p) {
+      var b = document.createElement("button");
+      b.type = "button"; b.className = "toggle"; b.textContent = p.name; b.setAttribute("aria-pressed", String(p.on));
+      b.addEventListener("click", function () {
+        var active = plats.filter(function (q) { return q.on; }).length;
+        if (p.on && active === 1) return;
+        p.on = !p.on; b.setAttribute("aria-pressed", String(p.on)); update();
+      });
+      box.appendChild(b);
+    });
+    var $ = function (id) { return document.getElementById(id); };
+    var niches = $("nNiches"), pages = $("nPages"), posts = $("nPosts");
+    [niches, pages, posts].forEach(function (i) { i.addEventListener("input", update); });
+    function fmt(n) {
+      if (n >= 1e6) return (n / 1e6).toFixed(n >= 1e7 ? 0 : 1).replace(/\.0$/, "") + "M";
+      if (n >= 1e3) return (n / 1e3).toFixed(n >= 1e4 ? 0 : 1).replace(/\.0$/, "") + "k";
+      return String(Math.round(n));
+    }
+    var canvas = $("dots"), st = fit(canvas), groups = [], tip = $("dotsTip"), hit = [];
+    function drawDots() {
+      var ctx = st.ctx, w = st.w, h = st.h;
+      ctx.clearRect(0, 0, w, h); hit = [];
+      var total = groups.reduce(function (a, g) { return a + g.count; }, 0);
+      if (!total) return;
+      var labelH = 16, gap = 10;
+      var size = Math.max(3, Math.min(14, Math.floor(Math.sqrt((w * (h - 28)) / (total * 1.35)))));
+      var step = size + Math.max(1, Math.round(size * 0.35));
+      var perRow = Math.max(1, Math.floor(w / step));
+      // lay groups out in reading order; each group starts on a fresh row with a label
+      var y = 0, needed = 0;
+      groups.forEach(function (g) { needed += labelH + Math.ceil(g.count / perRow) * step + gap; });
+      while (needed > h && size > 2) {
+        size -= 1; step = size + Math.max(1, Math.round(size * 0.35)); perRow = Math.max(1, Math.floor(w / step)); needed = 0;
+        groups.forEach(function (g) { needed += labelH + Math.ceil(g.count / perRow) * step + gap; });
+      }
+      ctx.font = "500 11px 'IBM Plex Mono', monospace"; ctx.textBaseline = "top";
+      groups.forEach(function (g) {
+        ctx.fillStyle = palette.muted;
+        ctx.fillText(g.name.toUpperCase() + " · " + g.count, 0, y);
+        y += labelH;
+        for (var i = 0; i < g.count; i++) {
+          var col = i % perRow, row = Math.floor(i / perRow);
+          var x = col * step + size / 2, yy = y + row * step + size / 2;
+          ctx.beginPath(); ctx.arc(x, yy, size / 2, 0, Math.PI * 2);
+          ctx.fillStyle = palette.verdigris; ctx.fill();
+          hit.push({ x: x, y: yy, r: Math.max(size / 2, 5), name: g.name, n: i + 1, of: g.count });
+        }
+        y += Math.ceil(g.count / perRow) * step + gap;
+      });
+    }
+    canvas.addEventListener("mousemove", function (ev) {
+      var r = canvas.getBoundingClientRect(), mx = ev.clientX - r.left, my = ev.clientY - r.top, found = null;
+      for (var i = 0; i < hit.length; i++) { var d = hit[i]; if (Math.abs(d.x - mx) <= d.r && Math.abs(d.y - my) <= d.r) { found = d; break; } }
+      if (!found) { tip.hidden = true; return; }
+      tip.hidden = false; tip.textContent = found.name + " · page " + found.n + " of " + found.of;
+      tip.style.left = (found.x + 16) + "px"; tip.style.top = (found.y + 16) + "px";
+    });
+    canvas.addEventListener("mouseleave", function () { tip.hidden = true; });
+    function update() {
+      var n = +niches.value, p = +pages.value, ppd = +posts.value;
+      var active = plats.filter(function (q) { return q.on; });
+      var totalPages = n * active.length * p, postsDay = totalPages * ppd;
+      var masters = Math.ceil(postsDay / 12);
+      var review = Math.round(n * 5 + postsDay * 0.05);
+      var lo = postsDay * 30 * 150, hi = postsDay * 30 * 1500;
+      $("oNiches").textContent = n; $("oPages").textContent = p; $("oPosts").textContent = ppd;
+      $("tPages").textContent = totalPages.toLocaleString("en-US");
+      $("tPostsDay").textContent = postsDay.toLocaleString("en-US");
+      $("tMasters").textContent = masters.toLocaleString("en-US");
+      $("tReview").textContent = review >= 90 ? (review / 60).toFixed(1).replace(/\.0$/, "") + " h" : review + " min";
+      $("tViews").textContent = fmt(lo) + "–" + fmt(hi);
+      $("tTier").textContent = totalPages <= 35 ? "Seed" : totalPages <= 320 ? "Growth" : "Scale";
+      groups = active.map(function (q) { return { name: q.name, count: n * p }; });
+      drawDots();
+    }
+    new ResizeObserver(function () { st = fit(canvas); drawDots(); }).observe(canvas);
+    themeListeners.push(drawDots);
+    update();
+  })();
+
+  /* ---------------- niche board ---------------- */
+  (function nicheBoard() {
+    var NICHES = [
+      { name: "Sports and cricket", status: "start", rank: 1, why: "Biggest free attention pool in BD, IN and PK. Daily, emotional, sponsor-friendly.", c: "BD · IN · PK · LK", l: "bn · hi · ur · en · si", rules: ["No broadcast footage or live re-streams. Graphics, stats, commentary and fan reactions only."] },
+      { name: "Music", status: "start", rank: 2, why: "Songs break on short video. One hit lifts every page, artist and event.", c: "IN · LK · TH · ID · ES · BR · US · EU · BD", l: "en · hi · bn · th · es · pt", rules: ["No bot streams.", "No AI clones of real artists' voices without written permission.", "Label AI-made tracks and visuals."] },
+      { name: "Beauty and fashion", status: "start", rank: 3, why: "High-intent female audience with a strong affiliate fit.", c: "BD · IN · PK · TH", l: "bn · hi · ur · th · en", rules: ["No fake reviews or fake before/after results.", "Disclose every paid post."] },
+      { name: "E-commerce and F-commerce", status: "start", rank: 4, why: "Every client wants sales. F-commerce is huge in Bangladesh.", c: "BD · IN · PK · TH", l: "bn · hi · ur · th · en", rules: ["Real products and real prices only."] },
+      { name: "AI teaching and digital skills", status: "start", rank: 5, why: "Huge demand for income skills. Feeds our own services.", c: "BD · IN · PK", l: "bn · hi · ur · en", rules: ["No guaranteed-income claims."] },
+      { name: "Entrepreneurship and side income", status: "careful", rank: 6, why: "Aspiration content travels far and is the natural home of the Community Hub.", c: "BD · IN · PK · TH", l: "bn · hi · ur · en", rules: ["Never charge people to join or unlock work."] },
+      { name: "Entertainment and memes", status: "start", rank: 7, why: "Fastest follower growth. Carries client promos well.", c: "BD · IN · PK · TH", l: "bn · hi · ur · th · en", rules: ["Transform and credit. Never re-upload."] },
+      { name: "News and news portals", status: "gated", rank: 8, why: "Daily habit and search traffic.", c: "BD · IN · PK", l: "bn · hi · ur · en", rules: ["Register the portal where the law requires it.", "Cite sources. No AI-invented quotes."] },
+      { name: "Finance, trading, affiliate", status: "gated", rank: 9, why: "Highest affiliate payouts and the most regulated niche.", c: "BD · IN · PK · TH", l: "bn · hi · ur · th · en", rules: ["Education only. No tips or guaranteed returns.", "Only brokers licensed in the viewer's country."] },
+      { name: "Children and family", status: "gated", rank: 10, why: "Massive YouTube watch time under strict rules.", c: "BD · IN · PK · TH", l: "bn · hi · ur · th · en", rules: ["Made-for-kids settings: no data collection, no comments, no personalized ads.", "Never mixed with finance or dating brands."] },
+      { name: "Surrogacy and fertility", status: "gated", rank: 11, why: "Client demand exists, but the law differs sharply by country.", c: "BD · TH", l: "bn · th · en", rules: ["India bans commercial surrogacy and its ads. Never target India.", "Education only, licensed clinics, lawyer sign-off."] }
+    ];
+    var LABEL = { start: "Start", careful: "Careful", gated: "Gated", no_go: "No-go" };
+    var grid = document.getElementById("nicheGrid"), filters = document.getElementById("nicheFilters");
+    NICHES.forEach(function (n) {
+      var d = document.createElement("details");
+      d.className = "niche " + n.status; d.dataset.status = n.status;
+      var rules = n.rules.map(function (r) { return "<li>" + r + "</li>"; }).join("");
+      d.innerHTML =
+        '<summary><div class="top"><span class="pill ' + n.status + '">' + LABEL[n.status] + "</span>" +
+        (n.rank ? '<span class="rank" title="Pilot rank">#' + n.rank + "</span>" : "") + "</div>" +
+        "<h3>" + n.name + '</h3><p class="why">' + n.why + "</p></summary>" +
+        '<div class="more"><p class="meta">Countries: ' + n.c + "</p><p class=\"meta\">Languages: " + n.l + '</p><p class="label">Rules</p><ul>' + rules + "</ul></div>";
+      grid.appendChild(d);
+    });
+    var opts = [["all", "All"], ["start", "Start now"], ["careful", "Careful"], ["gated", "Gated"]];
+    opts.forEach(function (o, i) {
+      var b = document.createElement("button");
+      b.type = "button"; b.className = "toggle"; b.textContent = o[1]; b.setAttribute("aria-pressed", i === 0 ? "true" : "false");
+      b.addEventListener("click", function () {
+        filters.querySelectorAll("button").forEach(function (x) { x.setAttribute("aria-pressed", "false"); });
+        b.setAttribute("aria-pressed", "true");
+        document.querySelectorAll("#niches .niche").forEach(function (c) { c.hidden = !(o[0] === "all" || c.dataset.status === o[0]); });
+
+      });
+      filters.appendChild(b);
+    });
+  })();
+
+  /* ---------------- stack rows ---------------- */
+  (function stack() {
+    var rows = [
+      ["Scout", [["vidIQ", "free"], ["TikTok Creative Center", "free"], ["Google Trends", "free"], ["Meta Ad Library", "free"], ["Playwright · Crawl4AI", "free"], ["yt-dlp", "free"], ["Apify", "paid"]]],
+      ["Brief", [["Claude Code (Max)", "paid"], ["Claude API", "paid"], ["Ollama · Qwen", "free"]]],
+      ["Create", [["MoneyPrinterTurbo", "free"], ["Remotion", "free"], ["FFmpeg", "free"], ["Whisper", "free"], ["Edge TTS", "free"], ["ComfyUI", "free"], ["Canva Premium", "paid"], ["Kling", "paid"], ["Higgsfield", "paid"]]],
+      ["Guard", [["Medusa Guard rules", "free"], ["Duplicate detector", "free"]]],
+      ["Publish", [["Postiz", "free"], ["n8n", "free"], ["Native platform APIs", "free"], ["X API", "paid"]]],
+      ["Learn", [["Insights APIs", "free"], ["Dub · Shlink", "free"], ["PostgreSQL", "free"], ["Metabase", "free"]]],
+      ["Command", [["Medusa dashboard (Next.js)", "free"], ["Hostinger VPS", "paid"]]]
+    ];
+    var host = document.getElementById("stackRows");
+    rows.forEach(function (r) {
+      var row = document.createElement("div"); row.className = "stack-row";
+      row.innerHTML = '<span class="stage">' + r[0] + '</span><div class="chips">' + r[1].map(function (t) { return '<span class="chip ' + t[1] + '">' + t[0] + "</span>"; }).join("") + "</div>";
+      host.appendChild(row);
+    });
+  })();
+
+  /* ---------------- budget ---------------- */
+  (function budget() {
+    var EXISTING = 55;
+    var TIERS = [
+      { id: "seed", name: "Seed", tag: "Prove it with one niche", lines: [["Claude upgrade Pro → Max 5x", 80], ["Claude API for 24/7 automation", 15], ["Hostinger VPS (8 GB)", 12], ["AI video credits (Kling)", 10], ["Contingency", 10], ["X API pay-per-use", 5], ["Domains and email", 3]] },
+      { id: "growth", name: "Growth", tag: "10–20 pages per platform, 3 niches", lines: [["Creator Network fund", 100], ["Claude Max 5x upgrade", 80], ["Higgsfield / Kling Pro", 45], ["Claude API", 40], ["Apify scrapers", 35], ["VPS (16 GB)", 25], ["ElevenLabs voices", 22], ["Rented cloud GPU", 20], ["Contingency", 20], ["X API", 10], ["Domains and email", 5]] },
+      { id: "scale", name: "Scale", tag: "All priority niches, client portal, music", lines: [["Creator Network fund", 300], ["2 part-time editors (BD)", 300], ["Claude Max 20x upgrade", 180], ["Claude API", 120], ["Higgsfield Ultra", 110], ["Pay-per-clip video", 60], ["Rented cloud GPU", 60], ["Two VPS servers", 50], ["ElevenLabs (2 seats)", 50], ["Data and scraping", 50], ["Contingency", 50], ["X API", 20], ["Domains and email", 10]] }
+    ];
+    TIERS.forEach(function (t) { t.total = t.lines.reduce(function (a, l) { return a + l[1]; }, 0); });
+    var cur = 0, tiersBox = document.getElementById("tiers"), bars = document.getElementById("bars");
+    var pkg = document.getElementById("pkg"), inc = document.getElementById("incExisting");
+    TIERS.forEach(function (t, i) {
+      var b = document.createElement("button");
+      b.type = "button"; b.className = "tier"; b.setAttribute("aria-pressed", i === 0 ? "true" : "false");
+      b.innerHTML = '<span class="t-name">' + t.name + '</span><span class="t-total num">$' + t.total.toLocaleString("en-US") + '</span><span class="t-tag">' + t.tag + " · per month</span>";
+      b.addEventListener("click", function () { cur = i; tiersBox.querySelectorAll(".tier").forEach(function (x, k) { x.setAttribute("aria-pressed", k === i ? "true" : "false"); }); render(); });
+      tiersBox.appendChild(b);
+    });
+    function render() {
+      var t = TIERS[cur], max = t.lines[0][1];
+      bars.innerHTML = '<div class="bars-head"><span class="label">' + t.name + ' · new cash per month</span><span class="label num">Total $' + t.total.toLocaleString("en-US") + "</span></div>";
+      var fills = [];
+      t.lines.forEach(function (l) {
+        var row = document.createElement("div"); row.className = "bar-row"; row.tabIndex = 0;
+        var share = Math.round((l[1] / t.total) * 100);
+        row.setAttribute("aria-label", l[0] + ", $" + l[1] + ", " + share + "% of the tier");
+        row.innerHTML = '<span class="b-label">' + l[0] + '</span><span class="b-val">$' + l[1] + '</span><div class="bar-track"><div class="bar-fill"></div></div><span class="b-share">' + share + "% of total</span>";
+        bars.appendChild(row);
+        fills.push([row.querySelector(".bar-fill"), Math.max(1.5, (l[1] / max) * 100)]);
+      });
+      var setW = function () { fills.forEach(function (f) { f[0].style.width = f[1] + "%"; }); };
+      if (reduce) setW(); else requestAnimationFrame(function () { requestAnimationFrame(setW); });
+      breakEven();
+    }
+    function breakEven() {
+      var t = TIERS[cur], price = +pkg.value, cost = t.total + (inc.checked ? EXISTING : 0);
+      var n = Math.ceil(cost / price);
+      document.getElementById("oPkg").textContent = "$" + price;
+      document.getElementById("beClients").textContent = n;
+      document.getElementById("beText").textContent = (n === 1 ? "client" : "clients") + " a month covers " + t.name + " ($" + cost.toLocaleString("en-US") + ")";
+    }
+    pkg.addEventListener("input", breakEven); inc.addEventListener("change", breakEven);
+    render();
+  })();
+
+  /* ---------------- law matrix ---------------- */
+  (function law() {
+    var C = ["Bangladesh", "India", "Pakistan", "Thailand"];
+    var ROWS = [
+      { t: "Surrogacy ads", rule: "Education only, lawyer sign-off", cells: [
+        ["amber", "Review", "No specific surrogacy law. Medical rules apply, so get a lawyer's view first."],
+        ["red", "Illegal", "The Surrogacy (Regulation) Act 2021 bans commercial surrogacy and advertising it, with up to 10 years in prison."],
+        ["amber", "Review", "Restricted. Legal review needed."],
+        ["amber", "Restricted", "Restricted by the 2015 assisted-reproduction law."]] },
+      { t: "Trading tips", rule: "Education only, licensed brokers", cells: [
+        ["amber", "Restricted", "Residents' forex trading is restricted. Education only."],
+        ["amber", "Restricted", "SEBI finfluencer rules stop regulated firms working with unregistered advice-givers. SEBI ordered ₹546 crore impounded from a finfluencer in Dec 2025."],
+        ["amber", "Restricted", "Promote only SECP-licensed brokers."],
+        ["amber", "Restricted", "Promote only Thai SEC-licensed firms."]] },
+      { t: "AI-made media", rule: "Always labelled", cells: [
+        ["ok", "Label", "Platform AI labels are required for realistic AI content."],
+        ["amber", "Law", "IT Rules amendment, in force since 20 Feb 2026: a visible label and provenance metadata on synthetic content."],
+        ["ok", "Label", "Platform AI labels are required."],
+        ["ok", "Label", "Platform AI labels are required."]] },
+      { t: "News portals", rule: "Register first", cells: [
+        ["amber", "Register", "Online news portals must register with the Ministry of Information."],
+        ["amber", "Register", "Digital news publishers must file their details under the IT Rules 2021."],
+        ["amber", "Review", "PECA applies to online content."],
+        ["amber", "Review", "The Computer Crime Act applies to online content."]] }
+    ];
+    var body = document.getElementById("lawBody"), note = document.getElementById("lawNote");
+    ROWS.forEach(function (r, ri) {
+      var tr = document.createElement("tr");
+      tr.innerHTML = '<td class="topic">' + r.t + "</td>";
+      r.cells.forEach(function (c, ci) {
+        var td = document.createElement("td");
+        var b = document.createElement("button");
+        b.type = "button"; b.className = "cell " + c[0]; b.textContent = c[1];
+        b.setAttribute("aria-label", r.t + ", " + C[ci] + ": " + c[1]);
+        b.setAttribute("aria-pressed", ri === 0 && ci === 1 ? "true" : "false");
+        b.addEventListener("click", function () {
+          body.querySelectorAll(".cell").forEach(function (x) { x.setAttribute("aria-pressed", "false"); });
+          b.setAttribute("aria-pressed", "true");
+          note.innerHTML = "<b>" + r.t + ", " + C[ci] + ":</b> " + c[2];
+        });
+        td.appendChild(b); tr.appendChild(td);
+      });
+      var rule = document.createElement("td"); rule.className = "rule"; rule.textContent = r.rule; tr.appendChild(rule);
+      body.appendChild(tr);
+    });
+  })();
+})();
+</script>
+</body>
+</html>
